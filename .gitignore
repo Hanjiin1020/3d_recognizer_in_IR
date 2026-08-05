@@ -14,14 +14,19 @@ __MACOSX/
 
 # Private and generated project content
 data/
-models/
 training_log/
 runs/
 screenshots/
 screenshot.png
 
+# Keep only the three documented team experiment checkpoints
+models/*
+!models/README.md
+!models/count
+!models/face
+!models/signlanguage
+
 # Components intentionally excluded from this non-runnable archive
-randlanet/
 bin/
 Dockerfile
 arm64.Dockerfile
@@ -37,4 +42,3 @@ Makefile
 *.so
 *.a
 *.pdb
-

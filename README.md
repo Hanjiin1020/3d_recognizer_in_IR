@@ -1,8 +1,8 @@
 # 3D Recognizer — D455 adaptation archive
 
-> **Non-runnable archival skeleton**
+> **Non-runnable archival snapshot**
 >
-> This repository preserves a limited source skeleton showing an Intel RealSense D455 adaptation. It is intentionally incomplete and is not distributed as installable or executable software.
+> This repository preserves a limited source snapshot showing an Intel RealSense D455 adaptation. It is intentionally incomplete and is not distributed as installable or supported software.
 
 ## Provenance
 
@@ -36,7 +36,7 @@ The remaining files are retained only to show the surrounding camera, dataset, a
 
 ## D455 point-cloud segmentation examples
 
-The six screenshots below were captured directly by the maintainer during the D455 experiments and are published as visual documentation. The underlying raw point-cloud captures, annotations, datasets, and trained models are not included in this archive.
+The six screenshots below were captured directly by the maintainer during the D455 experiments and are published as visual documentation. The underlying raw point-cloud captures, annotations, and datasets are not included; only the three documented experiment checkpoints described below are retained.
 
 These experiments perform point-wise binary segmentation on 3D point clouds. They should not be interpreted as image classification, sign-language translation, or face identification. In the archived viewer:
 
@@ -62,23 +62,25 @@ The foreground target is the fingertip or hand-feature region across selected si
 
 ### Face-region examples
 
-The foreground target is the feature region around the lips and chin. The overview includes variations in head direction, an open mouth, and a protruded-chin pose. These are segmentation experiments and do not perform face recognition or identity analysis.
+The foreground target is the feature region around the nose and chin. The overview includes variations in head direction, an open mouth, and a protruded-chin pose. These are segmentation experiments and do not perform face recognition or identity analysis.
 
 | Training | Inference |
 | --- | --- |
-| ![D455 face-region data capture and annotation interface](docs/images/face-ui.png) | ![D455 point-cloud segmentation examples around the lips and chin](docs/images/face-overview.png) |
+| ![D455 nose-and-chin data capture and annotation interface](docs/images/face-ui.png) | ![D455 point-cloud segmentation examples around the nose and chin](docs/images/face-overview.png) |
+
+## Archived implementation and checkpoints
+
+For limited technical context, this snapshot retains the inherited RandLA-Net implementation and three team experiment checkpoints: `count`, `face`, and `signlanguage`. The raw datasets and top-level training and prediction entry points remain excluded. The checkpoints are legacy pickle-based PyTorch artifacts and must not be loaded unless they are trusted. See [`models/README.md`](models/README.md) and [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 
 ## Intentionally excluded
 
 The following components are deliberately not published in this archive:
 
 - captured, annotated, test, and mock point-cloud datasets;
-- pretrained and locally trained model files;
+- upstream, timestamped, body, and other undocumented model files;
 - all visual assets other than the six maintainer-owned documentation screenshots above;
 - training logs and evaluation output;
-- the RandLA-Net implementation;
-- KPConv-, nanoflann-, and torch-points-kernels-derived native source;
-- model loading, prediction, and training scripts;
+- top-level prediction and training entry-point scripts;
 - Python dependency manifests;
 - Dockerfiles, Docker images, and container run scripts;
 - CMake output, compiled objects, caches, and generated files.
@@ -87,12 +89,10 @@ These exclusions avoid distributing assets whose redistribution rights were not 
 
 ## Why this repository does not run
 
-The preserved `main.py` and camera/UI modules reference components that are intentionally absent. In particular, this archive does not contain:
+The preserved application, camera/UI, RandLA-Net, and checkpoint files still depend on components that are intentionally absent. In particular, this archive does not contain:
 
-- model training or prediction implementations;
-- model weights;
 - point-cloud datasets;
-- third-party segmentation implementation code;
+- top-level training or prediction entry-point scripts;
 - an installable dependency specification;
 - a supported runtime or container environment.
 
@@ -107,6 +107,11 @@ No installation or execution support is provided. The source is retained only as
 |-- .gitignore
 |-- main.py                       # Original application structure plus timing change
 |-- dataset.py                    # Dataset interface retained for context
+|-- models/
+|   |-- README.md                 # Checkpoint provenance, hashes, and warning
+|   |-- count
+|   |-- face
+|   `-- signlanguage
 |-- docs/
 |   `-- images/                   # Maintainer-owned D455 experiment screenshots
 |       |-- count-overview.png
@@ -120,6 +125,11 @@ No installation or execution support is provided. The source is retained only as
 |   |-- base_camera.py
 |   |-- mock_camera.py
 |   `-- realsense_camera.py       # D455 stream and sensor adaptation
+|-- randlanet/                    # Inherited legacy segmentation implementation
+|   |-- README.md
+|   |-- model.py
+|   |-- CMakeLists.txt
+|   `-- utils/                    # Python/native source and embedded notices
 `-- ui/
     |-- __init__.py
     |-- data_capturing_frame.py
@@ -134,13 +144,15 @@ No installation or execution support is provided. The source is retained only as
 
 The upstream development container used passwordless root SSH, privileged mode, host networking, an unconfined AppArmor profile, and broad local X11 access. All Dockerfiles and container scripts have been removed from this public archive.
 
-The upstream model path used pickle-based PyTorch loading. Model loaders and model files have also been removed. This archive should not be treated as a secure runtime reference.
+The retained legacy model path uses pickle-based PyTorch loading. The three archived checkpoints have not been safety-audited and must be treated as untrusted unless their hashes and provenance are independently verified. This archive should not be treated as a secure runtime reference.
 
-No secrets, credentials, underlying face/body/sign-language point-cloud datasets, local models, or training logs are included. Only the six maintainer-owned documentation screenshots shown above are retained as visual records.
+No secrets, credentials, underlying face/body/sign-language point-cloud datasets, undocumented local models, or training logs are included. Only the three documented team checkpoints and six maintainer-owned documentation screenshots described above are retained.
 
 ## Licensing and copyright
 
 The reviewed upstream repository does not contain a project-wide root open-source license. Accordingly, this archive does not add or claim an MIT, Apache, GPL, or other project-wide license.
+
+Some retained third-party files carry narrower notices: torch-points-kernels-derived utilities retain their MIT notice, KPConv-derived native files are accompanied by the KPConv MIT notice, and `nanoflann.hpp` retains its BSD header. These notices apply only to their respective components and do not license the repository as a whole.
 
 - Original authors and contributors retain their respective rights.
 - The GitHub fork relationship and upstream attribution must remain visible.
@@ -151,7 +163,7 @@ See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for provenance details. Thi
 
 ## Research reference
 
-The excluded segmentation implementation was based on RandLA-Net:
+The retained legacy segmentation implementation was based on RandLA-Net:
 
 > Qingyong Hu, Bo Yang, Linhai Xie, Stefano Rosa, Yulan Guo, Zhihua Wang, Niki Trigoni, and Andrew Markham. **RandLA-Net: Efficient Semantic Segmentation of Large-Scale Point Clouds.** CVPR 2020. [arXiv:1911.11236](https://arxiv.org/abs/1911.11236)
 
