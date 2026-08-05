@@ -26,13 +26,10 @@ models/*
 !models/face
 !models/signlanguage
 
-# Components intentionally excluded from this non-runnable archive
+# Components intentionally excluded from this unsupported archive
 bin/
 Dockerfile
 arm64.Dockerfile
-requirements*.txt
-predict.py
-train.py
 
 # Native build artifacts
 CMakeFiles/

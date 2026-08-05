@@ -1,8 +1,8 @@
 # 3D Recognizer — D455 adaptation archive
 
-> **Non-runnable archival snapshot**
+> **Unsupported archival snapshot**
 >
-> This repository preserves a limited source snapshot showing an Intel RealSense D455 adaptation. It is intentionally incomplete and is not distributed as installable or supported software.
+> This repository preserves a limited source snapshot showing an Intel RealSense D455 adaptation. It is not presented as supported, reproducible, or security-hardened software.
 
 ## Provenance
 
@@ -29,6 +29,8 @@ The local work focused on adapting the camera path and visualization for an Inte
   - adjusted point-cloud depth filtering comments and experimentation points.
 - `main.py`
   - changed the live prediction interval from 250 ms to 400 ms.
+- `predict.py`
+  - retained the legacy standalone prediction entry point and aligned its point-cloud legend with the cyan viewer color.
 - `ui/vispy_view.py`
   - changed the primary point-cloud display color from red to cyan.
 
@@ -70,7 +72,7 @@ The foreground target is the feature region around the nose and chin. The overvi
 
 ## Archived implementation and checkpoints
 
-For limited technical context, this snapshot retains the inherited RandLA-Net implementation and three team experiment checkpoints: `count`, `face`, and `signlanguage`. The raw datasets and top-level training and prediction entry points remain excluded. The checkpoints are legacy pickle-based PyTorch artifacts and must not be loaded unless they are trusted. See [`models/README.md`](models/README.md) and [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+For limited technical context, this snapshot retains the inherited RandLA-Net implementation, the legacy `train.py` and `predict.py` entry points, a historical dependency list, and three team experiment checkpoints: `count`, `face`, and `signlanguage`. The raw datasets remain excluded. The checkpoints are legacy pickle-based PyTorch artifacts and must not be loaded unless they are trusted. See [`models/README.md`](models/README.md) and [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 
 ## Intentionally excluded
 
@@ -80,23 +82,21 @@ The following components are deliberately not published in this archive:
 - upstream, timestamped, body, and other undocumented model files;
 - all visual assets other than the six maintainer-owned documentation screenshots above;
 - training logs and evaluation output;
-- top-level prediction and training entry-point scripts;
-- Python dependency manifests;
 - Dockerfiles, Docker images, and container run scripts;
 - CMake output, compiled objects, caches, and generated files.
 
-These exclusions avoid distributing assets whose redistribution rights were not independently confirmed and avoid publishing inherited model-loading, dependency, native-build, and container-security risks.
+These exclusions limit unverified assets and omit generated native-build and container artifacts. The security limitations of the retained legacy model loader and dependency list are disclosed below.
 
-## Why this repository does not run
+## Runtime limitations
 
-The preserved application, camera/UI, RandLA-Net, and checkpoint files still depend on components that are intentionally absent. In particular, this archive does not contain:
+The snapshot includes historical training and prediction entry points, but it is not a self-contained or reproducible runtime. In particular, it does not contain:
 
 - point-cloud datasets;
-- top-level training or prediction entry-point scripts;
-- an installable dependency specification;
+- a prebuilt native neighbor-search extension;
+- a tested dependency lockfile or supported modern Python environment;
 - a supported runtime or container environment.
 
-No installation or execution support is provided. The source is retained only as a transparent record of the D455-oriented modifications within the fork.
+No installation or execution support is provided. The source and entry points are retained only as a transparent record of the D455-oriented experiments within the fork.
 
 ## Archived structure
 
@@ -107,6 +107,9 @@ No installation or execution support is provided. The source is retained only as
 |-- .gitignore
 |-- main.py                       # Original application structure plus timing change
 |-- dataset.py                    # Dataset interface retained for context
+|-- train.py                      # Legacy training entry point
+|-- predict.py                    # Legacy prediction/evaluation entry point
+|-- requirements.txt              # Historical, unaudited dependency list
 |-- models/
 |   |-- README.md                 # Checkpoint provenance, hashes, and warning
 |   |-- count
@@ -145,6 +148,8 @@ No installation or execution support is provided. The source is retained only as
 The upstream development container used passwordless root SSH, privileged mode, host networking, an unconfined AppArmor profile, and broad local X11 access. All Dockerfiles and container scripts have been removed from this public archive.
 
 The retained legacy model path uses pickle-based PyTorch loading. The three archived checkpoints have not been safety-audited and must be treated as untrusted unless their hashes and provenance are independently verified. This archive should not be treated as a secure runtime reference.
+
+The included `requirements.txt` records the historical environment and has not been audited for current vulnerabilities or compatibility. Do not install it blindly on a production or trusted system.
 
 No secrets, credentials, underlying face/body/sign-language point-cloud datasets, undocumented local models, or training logs are included. Only the three documented team checkpoints and six maintainer-owned documentation screenshots described above are retained.
 
