@@ -1,79 +1,166 @@
-# 3d_recognizer
+# 3D Recognizer — D455 adaptation archive
 
-This repository contains a tool to train/test models on 3d point cloud segmentation. It is specifically focussed on recongnizing points on a point cloud eg fingertips.
-The segementation is done by RandLa-Net. The implementation was based on this repository: [https://github.com/aRI0U/RandLA-Net-pytorch](https://github.com/aRI0U/RandLA-Net-pytorch)
+> **Non-runnable archival skeleton**
+>
+> This repository preserves a limited source skeleton showing an Intel RealSense D455 adaptation. It is intentionally incomplete and is not distributed as installable or executable software.
 
+## Provenance
 
-## Setup
-In order to run the tool, the following pre-requisites are required:
-* docker (The tool was tested on `Docker version 20.10.17`)
-* An Intel Realsense L515 camera (if data capturing is required)
+This project is a modified GitHub fork of [matthiasverstraete/3d_recognizer](https://github.com/matthiasverstraete/3d_recognizer). The upstream version reviewed for this archive was commit [`b4a02d2`](https://github.com/matthiasverstraete/3d_recognizer/commit/b4a02d24826b6f183bd45efce528fd9e5d3aa0d8).
 
-In order to run the tool, the dockerfile (which is included in the repository) should be build. This can be done by running the `bin/docker_build` script.
-This will generate docker image called `3d_gestures`.
+The upstream project states that its RandLA-Net implementation was based on [aRI0U/RandLA-Net-pytorch](https://github.com/aRI0U/RandLA-Net-pytorch).
 
-By running the `bin/run_in_docker` script, a docker container will be started and an interactive shell in this container will be opened.
-All UI options are properly set such that UI's from inside the docker container are visible on the host.
-Once you close the interactive sheel with `exit`, the docker container will be automatically stopped and removed.
+This archive must remain connected to the original repository through GitHub's fork mechanism. It must not be presented as an independently licensed original project.
 
-## Usage
-_This section assumes a docker container is running and that all commands below are executed inside this docker container shell._
+## Changes represented in this archive
 
-In order to start the 3d_recognizer tool, the following command can be run:
-```shell
-python3 main.py
+The local work focused on adapting the camera path and visualization for an Intel RealSense D455:
+
+- `camera/__init__.py`
+  - changed device discovery from an L515-specific name check to D400 product-line detection for D455 use;
+  - added D455-oriented diagnostic output;
+  - retained the mock-camera fallback structure;
+  - corrected the repository-relative mock-data path in this archival copy.
+- `camera/realsense_camera.py`
+  - added a D455-oriented RealSense pipeline;
+  - configured the depth stream at 848×480 and 60 FPS;
+  - validated the D400 product line;
+  - simplified the active depth-sensor options;
+  - adjusted point-cloud depth filtering comments and experimentation points.
+- `main.py`
+  - changed the live prediction interval from 250 ms to 400 ms.
+- `ui/vispy_view.py`
+  - changed the primary point-cloud display color from red to cyan.
+
+The remaining files are retained only to show the surrounding camera, dataset, application, and UI structure in which those changes were made.
+
+## D455 point-cloud segmentation examples
+
+The six screenshots below were captured directly by the maintainer during the D455 experiments and are published as visual documentation. The underlying raw point-cloud captures, annotations, datasets, and trained models are not included in this archive.
+
+These experiments perform point-wise binary segmentation on 3D point clouds. They should not be interpreted as image classification, sign-language translation, or face identification. In the archived viewer:
+
+- **cyan** represents the base point cloud;
+- **blue** represents manually selected annotation points;
+- **green** represents points selected by the model prediction.
+
+### Finger-count examples
+
+The foreground target is the fingertip region across hand poses representing counts from one to five. The training image records the data-capture and annotation interface; the inference image summarizes the resulting point-cloud segmentation across the captured poses.
+
+| Training | Inference |
+| --- | --- |
+| ![D455 finger-count data capture and annotation interface](docs/images/count-ui.png) | ![D455 point-cloud fingertip segmentation examples for finger counts](docs/images/count-overview.png) |
+
+### Sign-language examples
+
+The foreground target is the fingertip or hand-feature region across selected sign-language gestures. These screenshots document the segmentation targets and interface only; they do not demonstrate a complete sign-language classifier or translator.
+
+| Training | Inference |
+| --- | --- |
+| ![D455 sign-language data capture and annotation interface](docs/images/signlanguage-ui.png) | ![D455 point-cloud segmentation examples for selected sign-language gestures](docs/images/signlanguage-overview.png) |
+
+### Face-region examples
+
+The foreground target is the feature region around the lips and chin. The overview includes variations in head direction, an open mouth, and a protruded-chin pose. These are segmentation experiments and do not perform face recognition or identity analysis.
+
+| Training | Inference |
+| --- | --- |
+| ![D455 face-region data capture and annotation interface](docs/images/face-ui.png) | ![D455 point-cloud segmentation examples around the lips and chin](docs/images/face-overview.png) |
+
+## Intentionally excluded
+
+The following components are deliberately not published in this archive:
+
+- captured, annotated, test, and mock point-cloud datasets;
+- pretrained and locally trained model files;
+- all visual assets other than the six maintainer-owned documentation screenshots above;
+- training logs and evaluation output;
+- the RandLA-Net implementation;
+- KPConv-, nanoflann-, and torch-points-kernels-derived native source;
+- model loading, prediction, and training scripts;
+- Python dependency manifests;
+- Dockerfiles, Docker images, and container run scripts;
+- CMake output, compiled objects, caches, and generated files.
+
+These exclusions avoid distributing assets whose redistribution rights were not independently confirmed and avoid publishing inherited model-loading, dependency, native-build, and container-security risks.
+
+## Why this repository does not run
+
+The preserved `main.py` and camera/UI modules reference components that are intentionally absent. In particular, this archive does not contain:
+
+- model training or prediction implementations;
+- model weights;
+- point-cloud datasets;
+- third-party segmentation implementation code;
+- an installable dependency specification;
+- a supported runtime or container environment.
+
+No installation or execution support is provided. The source is retained only as a transparent record of the D455-oriented modifications within the fork.
+
+## Archived structure
+
+```text
+.
+|-- README.md
+|-- THIRD_PARTY_NOTICES.md
+|-- .gitignore
+|-- main.py                       # Original application structure plus timing change
+|-- dataset.py                    # Dataset interface retained for context
+|-- docs/
+|   `-- images/                   # Maintainer-owned D455 experiment screenshots
+|       |-- count-overview.png
+|       |-- count-ui.png
+|       |-- face-overview.png
+|       |-- face-ui.png
+|       |-- signlanguage-overview.png
+|       `-- signlanguage-ui.png
+|-- camera/
+|   |-- __init__.py               # D455/D400 discovery adaptation
+|   |-- base_camera.py
+|   |-- mock_camera.py
+|   `-- realsense_camera.py       # D455 stream and sensor adaptation
+`-- ui/
+    |-- __init__.py
+    |-- data_capturing_frame.py
+    |-- label.py
+    |-- prediction_frame.py
+    |-- train_frame.py
+    |-- vispy_canvas.py
+    `-- vispy_view.py             # Point-cloud color change
 ```
-The tool will automatically search a connected Intel Realsense L515 camera. If no camera was found,
-It will pretend a camera was connected and instead show some pre-recorded point clouds. This
-mode is mainly for demonstration purposes (mock data is located in `data/mock`).
 
-![main UI screenshot](./screenshot.png "main screenshot")
+## Security statement
 
-The UI is split up in two sections. The top section shows the output of the camera and allows 3d manipulation.
-The bottom part controls data storage and prediction.
+The upstream development container used passwordless root SSH, privileged mode, host networking, an unconfined AppArmor profile, and broad local X11 access. All Dockerfiles and container scripts have been removed from this public archive.
 
-### Top
-The top section of the UI contains 3 3D windows. The left most shows the live feed of the camera that is
-connected. The middle screen shows the last captured sample and allows annotation. The third will
-show the prediction that was made on the live feed of the camera.
+The upstream model path used pickle-based PyTorch loading. Model loaders and model files have also been removed. This archive should not be treated as a secure runtime reference.
 
-Each view can be manipulated by click, dragging and scrolling. This will rotate the 3d view. The 
-perspective of all 3 views is linked which makes it easier to orient everything. Navigation is easiest and works best in the left-most view.
+No secrets, credentials, underlying face/body/sign-language point-cloud datasets, local models, or training logs are included. Only the six maintainer-owned documentation screenshots shown above are retained as visual records.
 
-The center view allows labelling. By clicking anywhere on the shown point cloud with the middle mouse button (scroll wheel),
-an annotation point will be added on the point cloud. By clicking again on the blue point (with the middle mouse button) the
-annotation point will be removed again. This allows labeling specific points on the captured data.
-Each annotation point is always immediately stored on disk.
+## Licensing and copyright
 
-### Bottom
-The bottom section of the UI allows control over data capturing and predictions.
+The reviewed upstream repository does not contain a project-wide root open-source license. Accordingly, this archive does not add or claim an MIT, Apache, GPL, or other project-wide license.
 
-#### Capturing
-In order to capture data, first a dataset name needs to be filled in. Each time you click the
-'Capture' button, a capture will be added to that dataset (stored in `/data/<dataset_name>`). The
-total number of samples in that dataset is shown below the 'Capture' button.
-After capture was taken, it is shown in the middle 3d view so it can be labelled.
+- Original authors and contributors retain their respective rights.
+- The GitHub fork relationship and upstream attribution must remain visible.
+- Existing code must not be treated as generally licensed for independent redistribution or commercial use.
+- Obtain written permission from the relevant copyright holders before publishing this work as an independent repository, distributing a Docker image, or using it commercially.
 
-#### Training
-Once a sufficient amount of point clouds were captured and labelled, it is possible to press the
-'Train' button. This will train a new model based on the selected dataset. The progress bar will show
-the progress of this training process. Once a model was successfully trained, the name of that model (time of training)
-will be shown below the progress bar.
+See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for provenance details. This repository and its documentation are an archival attribution record, not legal advice or a grant of rights.
 
-Note that the tool comes pre-installed with an already trained model. Once a more recent model is trained, this will
-used for prediction.
+## Research reference
 
-#### Prediction
-Finally, it is also possible to do predictions in this tool. Press the 'Predict' button in order to start
-predictions. As long as the 'Predict' button is toggled on, a new prediction will be made every 250 ms. The
-output is shown in the right-most 3D view. One can dynamically adjust the confidence with the slider above the 'Predict' button.
-Click the 'Predict' button again to stop predictions.
+The excluded segmentation implementation was based on RandLA-Net:
 
-### Commands
+> Qingyong Hu, Bo Yang, Linhai Xie, Stefano Rosa, Yulan Guo, Zhihua Wang, Niki Trigoni, and Andrew Markham. **RandLA-Net: Efficient Semantic Segmentation of Large-Scale Point Clouds.** CVPR 2020. [arXiv:1911.11236](https://arxiv.org/abs/1911.11236)
 
-Separate from the main UI tool, this repository also includes a few scripts for convenience.
-In order to train a new model, one can run `python train.py`. See `python train.py --help` for further information.
-
-It is also possible to evaluate a model by running `python predict.py`. This will run inference a selected model.
-See `python predict.py --help` for more information.
-
+```bibtex
+@inproceedings{hu2020randla,
+  title={RandLA-Net: Efficient Semantic Segmentation of Large-Scale Point Clouds},
+  author={Hu, Qingyong and Yang, Bo and Xie, Linhai and Rosa, Stefano and Guo, Yulan and Wang, Zhihua and Trigoni, Niki and Markham, Andrew},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages={11108--11117},
+  year={2020}
+}
+```

@@ -1,7 +1,0 @@
-#! /bin/bash
-
-if [[ "$(uname -m)" == "x86_64" ]]; then
-  docker build -t 3d_gestures -f Dockerfile .
-else
-  docker build -t 3d_gestures -f arm64.Dockerfile .
-fi
